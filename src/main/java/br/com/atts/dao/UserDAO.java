@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
 
@@ -11,7 +12,7 @@ import br.com.atts.model.User;
 
 @Repository
 public class UserDAO implements DAO<User> {
-	
+
 	@PersistenceContext
 	private EntityManager manager;
 
@@ -33,6 +34,14 @@ public class UserDAO implements DAO<User> {
 
 	public List<User> findAll() {
 		return manager.createQuery("select u from User u", User.class).getResultList();
+	}
+
+	public User findByEmailPassword(String email, String password){
+		TypedQuery<User> query = manager
+				.createQuery("select u from User u where u.email=:email and password=:password", User.class);
+		query.setParameter("email", email);
+		query.setParameter("password", password);
+		return query.getSingleResult();
 	}
 
 }
